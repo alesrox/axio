@@ -24,10 +24,6 @@ static bool match(Lexer* lexer, char expected) {
     return true;
 }
 
-static bool is_at_end(Lexer* lexer) {
-    return *lexer->current == '\0';
-}
-
 static Token make_token(Lexer* lexer, TokenType type) {
     Token token;
     token.type = type;
@@ -40,7 +36,7 @@ static Token make_token(Lexer* lexer, TokenType type) {
 
 static void trim(Lexer* lexer) {
     while (true) {
-        char c = peak(lexer);
+        char c = peek(lexer);
 
         switch (c) {
             case ' ':

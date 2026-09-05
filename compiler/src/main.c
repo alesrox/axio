@@ -1,5 +1,6 @@
-#include "lexer.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "lexer.h"
 
 char* read_file(const char* path) {
     FILE* file = fopen(path, "rb");
@@ -18,6 +19,8 @@ char* read_file(const char* path) {
 }
 
 int main(int argc, char* argv[]) {
+    (void)argc;
+    (void)argv;
     char* source = read_file("test.src");
     
     // Compilation...
