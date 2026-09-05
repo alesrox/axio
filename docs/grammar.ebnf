@@ -2,10 +2,10 @@ Program             ::= { Statement } ;
 
 Statement           ::= VarDecl | Assignment | FunctionDecl | ReturnStmt | IfStmt | ForStmt | WhileStmt | ExprStmt ;
 
-Type                ::= "int" | "float" | "bool" | "string" | "var" ;
+Type                ::= "int" | "float" | "bool" | "string" ;
 VarDecl             ::= Type IDENTIFIER [ "=" Expression ] ";" ;
 
-FunctionDecl        ::= "def" IDENTIFIER "(" [ ParameterList ] ")" [ "->" Type ] Block ;
+FunctionDecl        ::= "func" IDENTIFIER "(" [ ParameterList ] ")" [ "->" Type ] Block ;
 ParameterList       ::= Parameter { "," Parameter } ;
 Parameter           ::= Type IDENTIFIER ;
 
