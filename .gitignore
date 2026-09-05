@@ -1,0 +1,7 @@
+# Ejecutables
+*.o
+*.exe
+
+# Docs
+.env
+docs/codegen_spec.md
