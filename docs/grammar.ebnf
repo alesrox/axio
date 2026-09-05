@@ -1,0 +1,50 @@
+Program ::= { Statement } ;
+
+Statement ::= VarDecl | Assignment | FunctionDecl | ReturnStmt | IfStmt | WhileStmt | ExprStmt ;
+
+Type ::= "int" | "float" | "bool" | "string" | "var" ;
+VarDecl ::= Type IDENTIFIER [ "=" Expression ] ";" ;
+
+FunctionDecl ::= "def" IDENTIFIER "(" [ ParameterList ] ")" [ "->" Type ] Block ;
+ParameterList ::= Parameter { "," Parameter } ;
+Parameter     ::= Type IDENTIFIER ;
+
+Block         ::= "{" { Statement } "}" ;
+
+IfStmt        ::= "if" Expression Block { "elif" Expression Block } [ "else" Block ] ;
+WhileStmt     ::= "while" Expression Block ;
+ReturnStmt    ::= "return" [ Expression ] ";" ;
+
+Expression         ::= AssignmentExpr ;
+AssignmentExpr     ::= [ PrimaryExpr "." ] IDENTIFIER "=" Expression | LogicalOrExpr ;
+
+LogicalOrExpr      ::= LogicalAndExpr { "or" LogicalAndExpr } ;
+LogicalAndExpr     ::= BitwiseExpr { "and" BitwiseExpr } ;
+
+BitwiseExpr        ::= EqualityExpr { ( "&" | "|" | "^" | "<<" | ">>" ) EqualityExpr } ;
+
+EqualityExpr       ::= RelationalExpr { ( "==" | "!=" ) RelationalExpr } ;
+RelationalExpr     ::= AdditiveExpr { ( "<" | "<=" | ">" | ">=" ) AdditiveExpr } ;
+
+AdditiveExpr       ::= MultiplicativeExpr { ( "+" | "-" ) MultiplicativeExpr } ;
+MultiplicativeExpr ::= UnaryExpr { ( "*" | "/" | "%" ) UnaryExpr } ;
+
+UnaryExpr          ::= ( "-" | "not" | "~" ) UnaryExpr | PrimaryExpr ;
+
+PrimaryExpr        ::= Literal | IDENTIFIER | CallExpr | AccessExpr | "(" Expression ")" ;
+
+CallExpr           ::= IDENTIFIER "(" [ ArgumentList ] ")" ;
+ArgumentList       ::= Expression { "," Expression } ;
+
+AccessExpr         ::= PrimaryExpr "[" Expression "]" ;
+
+Literal    ::= INT_LITERAL | FLOAT_LITERAL | STRING_LITERAL | BOOLEAN_LITERAL | "nil" ;
+
+BOOLEAN_LITERAL ::= "True" | "False" ;
+INT_LITERAL     ::= DIGIT { DIGIT } ;
+FLOAT_LITERAL   ::= DIGIT { DIGIT } "." DIGIT { DIGIT } ;
+STRING_LITERAL  ::= '"' { ANY_CHARACTER_EXCEPT_QUOTE } '"' ;
+
+IDENTIFIER      ::= ( LETTER | "_" ) { LETTER | DIGIT | "_" } ;
+LETTER          ::= "a".."z" | "A".."Z" ;
+DIGIT           ::= "0".."9" ;
