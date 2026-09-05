@@ -1,7 +1,10 @@
 # Ejecutables
+bin/
+obj/
 *.o
 *.exe
 
 # Docs
 .env
 docs/codegen_spec.md
+compiler/test.src
