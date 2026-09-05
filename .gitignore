@@ -1,10 +1,39 @@
-# Ejecutables
-bin/
-obj/
+# ==========================================
+# Compilados y Artefactos de Build
+# ==========================================
 *.o
-*.exe
+*.a
+*.so
+*.dylib
+*.dll
 
-# Docs
-.env
-docs/codegen_spec.md
-compiler/test.src
+# Carpetas de binarios y objetos generados por los Makefiles
+/bin/
+/compiler/obj/
+/vm/obj/
+/tests/bin/
+
+# ==========================================
+# Archivos Temporales e Archivos de Editor
+# ==========================================
+# VS Code
+.vscode/
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux / Vim / Emacs
+*~
+*.swp
+*.swo
+
+# ==========================================
+# Artefactos del Compilador / Pruebas
+# ==========================================
+# Archivos de bytecode temporal generados durante pruebas
+*.bin
+*.bytecode
