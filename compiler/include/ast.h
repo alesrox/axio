@@ -18,6 +18,7 @@ typedef enum {
     AST_EXPR_UNARY,         // -a, !b, ~c
     AST_EXPR_BINARY,        // a + b, x && y, i // j
     AST_EXPR_ASSIGNMENT,    // x = expr
+    AST_CALL,
 
     // Sentencias (Statements)
     AST_STMT_EXPR,
@@ -26,10 +27,16 @@ typedef enum {
     AST_STMT_FOR,
     AST_STMT_WHILE,
     AST_STMT_RETURN,
-    AST_STMT_VAR_DECL
+    AST_STMT_VAR_DECL,
+    AST_FUNC_DECL
 } ASTNodeType;
 
 typedef struct ASTNode ASTNode;
+
+typedef struct {
+    TokenType type;
+    char* name;
+} Param;
 
 struct ASTNode {
     ASTNodeType type;
@@ -107,6 +114,19 @@ struct ASTNode {
         struct {
             ASTNode* expression;
         } expr_stmt;
+
+        struct {
+            ASTNode* callee;
+            ASTNode** args;
+            int arg_count;
+        } call;
+
+        struct {
+            char* name;
+            Param* params;
+            int param_count;
+            ASTNode* body;
+        } func_decl;
     } as;
 };
 
@@ -133,6 +153,13 @@ ASTNode* ast_create_for(const char* var_name, int length, ASTNode* iterable, AST
 ASTNode* ast_create_while(ASTNode* cond, ASTNode* body, int line);
 ASTNode* ast_create_return(ASTNode* value, int line);
 ASTNode* ast_create_expr_stmt(ASTNode* expr, int line);
+
+ASTNode* ast_create_call(ASTNode* callee, int line);
+void     ast_call_add_arg(ASTNode* node, ASTNode* arg);
+
+ASTNode* ast_create_func_decl(const char* name, int length, int line);
+void     ast_func_add_param(ASTNode* node, TokenType type, const char* name, int length);
+void     ast_func_set_body(ASTNode* node, ASTNode* body);
 
 void ast_free(ASTNode* node);
 

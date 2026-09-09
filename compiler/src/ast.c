@@ -148,6 +148,50 @@ ASTNode* ast_create_expr_stmt(ASTNode* expr, int line) {
     return node;
 }
 
+ASTNode* ast_create_call(ASTNode* callee, int line) {
+    ASTNode* node = allocate_node(AST_CALL, line);
+    node->as.call.callee = callee;
+    node->as.call.args = NULL;
+    node->as.call.arg_count = 0;
+    return node;
+}
+
+void ast_call_add_arg(ASTNode* node, ASTNode* arg) {
+    if (!node || node->type != AST_CALL || !arg) return;
+    node->as.call.arg_count++;
+    node->as.call.args = (ASTNode**)realloc(
+        node->as.call.args, 
+        sizeof(ASTNode*) * node->as.call.arg_count
+    );
+    node->as.call.args[node->as.call.arg_count - 1] = arg;
+}
+
+ASTNode* ast_create_func_decl(const char* name, int length, int line) {
+    ASTNode* node = allocate_node(AST_FUNC_DECL, line);
+    node->as.func_decl.name = strndup(name, length);
+    node->as.func_decl.params = NULL;
+    node->as.func_decl.param_count = 0;
+    node->as.func_decl.body = NULL;
+    return node;
+}
+
+void ast_func_add_param(ASTNode* node, TokenType type, const char* name, int length) {
+    if (!node || node->type != AST_FUNC_DECL) return;
+    node->as.func_decl.param_count++;
+    node->as.func_decl.params = (Param*)realloc(
+        node->as.func_decl.params, 
+        sizeof(Param) * node->as.func_decl.param_count
+    );
+    Param* param = &node->as.func_decl.params[node->as.func_decl.param_count - 1];
+    param->type = type;
+    param->name = strndup(name, length);
+}
+
+void ast_func_set_body(ASTNode* node, ASTNode* body) {
+    if (!node || node->type != AST_FUNC_DECL) return;
+    node->as.func_decl.body = body;
+}
+
 // free memory
 void ast_free(ASTNode* node) {
     if (!node) return;
@@ -216,6 +260,23 @@ void ast_free(ASTNode* node) {
 
         case AST_STMT_EXPR:
             ast_free(node->as.expr_stmt.expression);
+            break;
+
+        case AST_CALL:
+            ast_free(node->as.call.callee);
+            for (int i = 0; i < node->as.call.arg_count; i++) {
+                ast_free(node->as.call.args[i]);
+            }
+            free(node->as.call.args);
+            break;
+
+        case AST_FUNC_DECL:
+            free(node->as.func_decl.name);
+            for (int i = 0; i < node->as.func_decl.param_count; i++) {
+                free(node->as.func_decl.params[i].name);
+            }
+            free(node->as.func_decl.params);
+            ast_free(node->as.func_decl.body);
             break;
     }
 
