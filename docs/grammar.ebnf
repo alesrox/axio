@@ -1,9 +1,26 @@
 Program             ::= { Statement } ;
 
-Statement           ::= VarDecl | Assignment | FunctionDecl | ReturnStmt | IfStmt | ForStmt | WhileStmt | ExprStmt ;
+Statement           ::= VarDecl | Assignment | FunctionDecl | 
+                        StateMachineDecl | CheckpointStmt | RollbackStmt | EmitStmt | 
+                        ReturnStmt | IfStmt | ForStmt | WhileStmt | ExprStmt ;
 
-Type                ::= "int" | "float" | "bool" | "string" ;
+Type                ::= PrimitiveType | CustomType ;
+PrimitiveType       ::= "int" | "float" | "bool" | "string" ;
+CustomType          ::= IDENTIFIER ;
+
 VarDecl             ::= Type IDENTIFIER [ "=" Expression ] ";" ;
+
+StateMachineDecl    ::= "state_machine" IDENTIFIER "{" { StateFieldDecl } { StateDecl } "}" ;
+StateFieldDecl      ::= VarDecl ;
+StateDecl           ::= [ "initial" ] "state" IDENTIFIER "{" { StateBody } "}" ;
+StateBody           ::= OnEnterBlock | OnUpdateBlock | OnEventBlock ;
+
+OnEnterBlock        ::= "on_enter" Block ;
+OnUpdateBlock       ::= "on_update" "(" Parameter ")" Block ;
+OnEventBlock        ::= "on" IDENTIFIER [ "->" "transition" IDENTIFIER ] [ Block ] ;
+
+CheckpointStmt      ::= "checkpoint" STRING_LITERAL ";" ;
+RollbackStmt        ::= "rollback" STRING_LITERAL ";" ;
 
 FunctionDecl        ::= "func" IDENTIFIER "(" [ ParameterList ] ")" [ "->" Type ] Block ;
 ParameterList       ::= Parameter { "," Parameter } ;
@@ -32,8 +49,9 @@ MultiplicativeExpr  ::= UnaryExpr { ( "*" | "/" | "%" ) UnaryExpr } ;
 
 UnaryExpr           ::= ( "-" | "not" | "~" ) UnaryExpr | PrimaryExpr ;
 
-PrimaryExpr         ::= Literal | IDENTIFIER | CallExpr | AccessExpr | "(" Expression ")" ;
+PrimaryExpr         ::= Literal | MethodCallExpr| CallExpr | AccessExpr | IDENTIFIER | "(" Expression ")" ;
 
+MethodCallExpr      ::= PrimaryExpr "." IDENTIFIER "(" [ ArgumentList ] ")" ;
 CallExpr            ::= IDENTIFIER "(" [ ArgumentList ] ")" ;
 ArgumentList        ::= Expression { "," Expression } ;
 

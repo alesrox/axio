@@ -2,7 +2,9 @@
 
 ![Language](https://img.shields.io/badge/Language-C11-blue.svg) ![Build](https://img.shields.io/badge/Build-Makefile-brightgreen.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg) ![Status](https://img.shields.io/badge/Status-In%20Development-orange.svg)
 
-> An imperative, high-level and strongly typed programming language featuring a bytecode compiler and a virtual machine (VM), similar to Java. This project is a personal study and learning exercise, exploring the design and implementation of a custom programming language.
+> An imperative, high-level, and strongly typed programming language featuring a register-based VM. This project is a personal study and learning exercise, exploring the design and implementation of a custom programming language.
+
+> **ByteStack** combines **Native Finite State Machines (FSM)** with **Deterministic Replay / Rollback execution**, providing first-class primitives for building reliable, event-driven, and reversible stateful applications.
 
 ---
 
@@ -70,18 +72,38 @@ The project ecosystem is divided into two independent components:
 ## Code Example
 
 ```c
-// Variable declarations with explicit typing
-int x = 10;
-int y = 20;
+// Native Finite State Machine definition
+state_machine OrderProcessor {
+    int order_id;
+    float total;
 
-// Conditional structure
-if (x < y) {
-    print("ByteStack VM is running!");
+    initial state Received {
+        on event_payment_ok -> transition Processing;
+        on event_cancel -> transition Cancelled;
+    }
+
+    state Processing {
+        on_enter {
+            // Create a restoration point for current frame registers
+            checkpoint "pre_inventory_check";
+        }
+
+        on event_out_of_stock {
+            // Revert register mutations and restore previous state
+            rollback "pre_inventory_check";
+        }
+
+        on event_shipped -> transition Shipped;
+    }
+
+    state Shipped {}
+    state Cancelled {}
 }
 
-// Function with parameters and typed return
-func add(int a, int b) -> int {
-    return a + b;
+func main() -> int {
+    OrderProcessor order = OrderProcessor(101, 49.99);
+    order.emit(event_payment_ok);
+    return 0;
 }
 ```
 
@@ -236,6 +258,9 @@ Handling dynamic collections and heap-referenced objects.
 | `SET_FIELD` | `ABC` | `R(A)[R(B)] = R(C)` | Writes value R(C) into property/index R(B) of object R(A). |
 | `CONCAT` | `ABC` | `R(A) = R(B) \|\| R(C)` | String concatenation in Heap. |
 
+> [!NOTE] TO DO:
+> **FSM and Rollback Instructions** 
+
 ---
 
 ## Tag and Payload Decoding
@@ -245,22 +270,112 @@ Handling dynamic collections and heap-referenced objects.
 * **Nil**: Dedicated tag (011) + Null payload (0x0).
 * **Pointer**: Dedicated tag (100) + 48-bit payload containing the direct heap object memory address.
 
+
+---
+
+## Grammar EBNF
+
+```EBNF
+Program             ::= { Statement } ;
+
+Statement           ::= VarDecl | Assignment | FunctionDecl | 
+                        StateMachineDecl | CheckpointStmt | RollbackStmt | EmitStmt | 
+                        ReturnStmt | IfStmt | ForStmt | WhileStmt | ExprStmt ;
+
+Type                ::= PrimitiveType | CustomType ;
+PrimitiveType       ::= "int" | "float" | "bool" | "string" ;
+CustomType          ::= IDENTIFIER ;
+
+VarDecl             ::= Type IDENTIFIER [ "=" Expression ] ";" ;
+
+StateMachineDecl    ::= "state_machine" IDENTIFIER "{" { StateFieldDecl } { StateDecl } "}" ;
+StateFieldDecl      ::= VarDecl ;
+StateDecl           ::= [ "initial" ] "state" IDENTIFIER "{" { StateBody } "}" ;
+StateBody           ::= OnEnterBlock | OnUpdateBlock | OnEventBlock ;
+
+OnEnterBlock        ::= "on_enter" Block ;
+OnUpdateBlock       ::= "on_update" "(" Parameter ")" Block ;
+OnEventBlock        ::= "on" IDENTIFIER [ "->" "transition" IDENTIFIER ] [ Block ] ;
+
+CheckpointStmt      ::= "checkpoint" STRING_LITERAL ";" ;
+RollbackStmt        ::= "rollback" STRING_LITERAL ";" ;
+
+FunctionDecl        ::= "func" IDENTIFIER "(" [ ParameterList ] ")" [ "->" Type ] Block ;
+ParameterList       ::= Parameter { "," Parameter } ;
+Parameter           ::= Type IDENTIFIER ;
+
+Block               ::= "{" { Statement } "}" ;
+
+IfStmt              ::= "if" Expression Block { "else" "if" Expression Block } [ "else" Block ] ;
+ForStmt             ::= "for" IDENTIFIER "in" Expression Block ;
+WhileStmt           ::= "while" Expression Block ;
+ReturnStmt          ::= "return" [ Expression ] ";" ;
+
+Expression          ::= AssignmentExpr ;
+AssignmentExpr      ::= [ PrimaryExpr "." ] IDENTIFIER "=" Expression | LogicalOrExpr ;
+
+LogicalOrExpr       ::= LogicalAndExpr { "or" LogicalAndExpr } ;
+LogicalAndExpr      ::= BitwiseExpr { "and" BitwiseExpr } ;
+
+BitwiseExpr         ::= EqualityExpr { ( "&" | "|" | "^" | "<<" | ">>" ) EqualityExpr } ;
+
+EqualityExpr        ::= RelationalExpr { ( "==" | "!=" ) RelationalExpr } ;
+RelationalExpr      ::= AdditiveExpr { ( "<" | "<=" | ">" | ">=" ) AdditiveExpr } ;
+
+AdditiveExpr        ::= MultiplicativeExpr { ( "+" | "-" ) MultiplicativeExpr } ;
+MultiplicativeExpr  ::= UnaryExpr { ( "*" | "/" | "%" ) UnaryExpr } ;
+
+UnaryExpr           ::= ( "-" | "not" | "~" ) UnaryExpr | PrimaryExpr ;
+
+PrimaryExpr         ::= Literal | MethodCallExpr| CallExpr | AccessExpr | IDENTIFIER | "(" Expression ")" ;
+
+MethodCallExpr      ::= PrimaryExpr "." IDENTIFIER "(" [ ArgumentList ] ")" ;
+CallExpr            ::= IDENTIFIER "(" [ ArgumentList ] ")" ;
+ArgumentList        ::= Expression { "," Expression } ;
+
+AccessExpr          ::= PrimaryExpr "[" Expression "]" ;
+
+Literal             ::= INT_LITERAL | FLOAT_LITERAL | STRING_LITERAL | BOOLEAN_LITERAL | "nil" ;
+
+BOOLEAN_LITERAL     ::= "True" | "False" ;
+INT_LITERAL         ::= DIGIT { DIGIT } ;
+FLOAT_LITERAL       ::= DIGIT { DIGIT } "." DIGIT { DIGIT } ;
+STRING_LITERAL      ::= '"' { ANY_CHARACTER_EXCEPT_QUOTE } '"' ;
+
+IDENTIFIER          ::= ( LETTER | "_" ) { LETTER | DIGIT | "_" } ;
+LETTER              ::= "a".."z" | "A".."Z" ;
+DIGIT               ::= "0".."9" ;
+```
+
 ---
 
 ## Development Roadmap
-* [ ] Compiler: 
-    * [x] **Lexer**
-    * [x] **Parser**
-    * [ ] **Semantic Analysis**
-    * [ ] **Bytecode generator**
-* [ ] Virtual Machine (VM);
-    * [ ] **Value Representation:** Implement data representation.
-    * [ ] **32-bit Instruction Decoder:** Bitwise packing/unpacking macros for 32-bit instruction formats.
-    * [ ] **Register Execution Engine:** Main dispatch loop
-    * [ ] **Sliding Call Frames:** Pointers to contiguous register windows within a global array for function calls without argument copying.
-    * [ ] **Foreign Function Interface (FFI / Native C-API):** A mechanism for invoking functions written in C from the VM environment.
-    * [ ] **Core I/O:** Printing (print, println), input reading, and basic file handling. 
-    * [ ] **String Operations:** String manipulation, concatenation, and optimization via string interning.
+
+* [ ] **Phase 1: Compiler Core**
+    * [x] **Lexer:** Base tokenization for primitives, flow control, and functions.
+    * [x] **Parser:** EBNF grammar parsing for core structures and explicit typing.
+    * [ ] **Semantic Analysis:** Symbol table, scope resolution, and basic type checking.
+    * [ ] **Bytecode Generator:** Core 32-bit opcode generation (`MOVE`, `ADD`, `JUMP`, `CALL`).
+
+* [ ] **Phase 2: Virtual Machine Core**
+    * [ ] **Value Representation:** 64-bit NaN-boxing memory layout.
+    * [ ] **32-bit Instruction Decoder:** Bitwise extraction macros ($ABC$, $ABx$, $sAx$).
+    * [ ] **Register Engine & Sliding Frames:** Main dispatch loop and zero-copy call frames.
+    * [ ] **Garbage Collector:** Mark-and-Sweep collector for heap objects.
+
+* [ ] **Phase 3: Native State Machines (FSM)**
+    * [ ] **Compiler Extensions:** AST nodes, parser rules, and semantic validation for `state_machine` and `on` events.
+    * [ ] **Bytecode Integration:** Generator support for `OP_TRANSITION` and `OP_EMIT`.
+    * [ ] **VM FSM Engine:** State register management and event dispatch system.
+
+* [ ] **Phase 4: Time-Travel & Reversible Execution**
+    * [ ] **Compiler Extensions:** Syntax and AST support for `checkpoint` and `rollback` statements.
+    * [ ] **VM Mutation Buffer:** Circular Ring Buffer to capture active register snapshots.
+    * [ ] **Rollback Execution:** Low-overhead state restoration without heap reallocations.
+
+* [ ] **Phase 5: Standard Library & Interop**
+    * [ ] **Core I/O & Strings:** Basic print, file handling, and string interning.
+    * [ ] **Foreign Function Interface (FFI):** C-API bindings to embed the VM.
 
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
