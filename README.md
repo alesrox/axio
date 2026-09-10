@@ -1,10 +1,10 @@
-# ByteStack
+# Axio
 
 ![Language](https://img.shields.io/badge/Language-C11-blue.svg) ![Build](https://img.shields.io/badge/Build-Makefile-brightgreen.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg) ![Status](https://img.shields.io/badge/Status-In%20Development-orange.svg)
 
-> An imperative, high-level, and strongly typed programming language featuring a register-based VM. This project is a personal study and learning exercise, exploring the design and implementation of a custom programming language.
+> **Axio** is an imperative, high-level, and strongly typed programming language featuring a register-based VM that combines **Native Finite State Machines (FSM)** with **Deterministic Replay / Rollback execution**, providing first-class primitives for building reliable, event-driven, and reversible stateful applications.
 
-> **ByteStack** combines **Native Finite State Machines (FSM)** with **Deterministic Replay / Rollback execution**, providing first-class primitives for building reliable, event-driven, and reversible stateful applications.
+> This project is a personal study and learning exercise, exploring the design and implementation of a custom programming language.
 
 ---
 
@@ -119,8 +119,8 @@ You can see the grammar.ebnf on `docs/grammar.ebnf` or below on this README.
 ### Building from Source
 ```bash
 # Clone the repository
-git clone https://github.com/alesrox/ByteStack
-cd ByteStack
+git clone https://github.com/alesrox/axio
+cd axio
 
 # Build both compiler and VM
 make
@@ -129,7 +129,7 @@ make
 ---
 
 ## Usage
-ByteStack follows a two-step execution model: compile source code into bytecode, then execute it on the VM.
+Axio follows a two-step execution model: compile source code into bytecode, then execute it on the VM.
 
 ### 1. Compile Source Code
 ```bash
