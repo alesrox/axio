@@ -131,6 +131,7 @@ make tests
 
 # Check for memory leaks in the Virtual Machine
 valgrind --leak-check=full ./bin/vm sample.bin
+```
 
 ---
 
