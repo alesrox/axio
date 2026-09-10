@@ -119,7 +119,7 @@ You can see the grammar.ebnf on `docs/grammar.ebnf` or below on this README.
 ### Building from Source
 ```bash
 # Clone the repository
-git clone https://github.com/alesrox/axio
+git clone https://github.com/alesrox/axio.git
 cd axio
 
 # Build both compiler and VM
