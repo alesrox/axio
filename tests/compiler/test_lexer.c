@@ -20,7 +20,7 @@ const char* token_type_to_string(TokenType type) {
         case TOKEN_STRING_LITERAL: return "STRING_LITERAL";
         case TOKEN_TRUE:           return "TRUE";
         case TOKEN_FALSE:          return "FALSE";
-        case TOKEN_NIL:            return "NIL";
+        case TOKEN_NULL:            return "NULL";
         case TOKEN_INT:            return "INT";
         case TOKEN_FLOAT:          return "FLOAT";
         case TOKEN_BOOL:           return "BOOL";

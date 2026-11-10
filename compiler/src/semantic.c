@@ -28,7 +28,7 @@ const char* semantic_type_name(Type type) {
         case TYPE_BOOL: return "bool";
         case TYPE_STRING: return "string";
         case TYPE_VOID: return "void";
-        case TYPE_NIL: return "nil";
+        case TYPE_NULL: return "null";
         default: return "<error>";
     }
 }
@@ -160,7 +160,7 @@ static Type analyze_expr(SemanticAnalyzer* a, ASTNode* node) {
         case AST_LITERAL_FLOAT: return TYPE_FLOAT;
         case AST_LITERAL_STRING: return TYPE_STRING;
         case AST_LITERAL_BOOL: return TYPE_BOOL;
-        case AST_LITERAL_NIL: return TYPE_NIL;
+        case AST_LITERAL_NULL: return TYPE_NULL;
         case AST_EXPR_VARIABLE: {
             Symbol* symbol = find_symbol(a, node->as.variable.name);
             if (!symbol) {

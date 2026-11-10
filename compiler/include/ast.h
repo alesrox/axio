@@ -11,7 +11,7 @@ typedef enum {
     AST_LITERAL_FLOAT,
     AST_LITERAL_STRING,
     AST_LITERAL_BOOL,
-    AST_LITERAL_NIL,
+    AST_LITERAL_NULL,
     AST_EXPR_VARIABLE,
 
     // Expresiones Operacionales
@@ -136,7 +136,7 @@ ASTNode* ast_create_literal_int(int64_t value, int line);
 ASTNode* ast_create_literal_float(double value, int line);
 ASTNode* ast_create_literal_bool(bool value, int line);
 ASTNode* ast_create_literal_string(const char* value, int length, int line);
-ASTNode* ast_create_literal_nil(int line);
+ASTNode* ast_create_literal_null(int line);
 
 // Expression Constructors
 ASTNode* ast_create_variable(const char* name, int length, int line);

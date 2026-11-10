@@ -90,7 +90,7 @@ static TokenType identifier_type(Lexer* lexer) {
         case 'n':
             if (lexer->current - lexer->start > 1) {
                 switch (lexer->start[1]) {
-                    case 'i': return check_keyword(lexer, 2, 1, "l", TOKEN_NIL);
+                    case 'i': return check_keyword(lexer, 2, 1, "l", TOKEN_NULL);
                     case 'o': return check_keyword(lexer, 2, 1, "t", TOKEN_NOT);
                 }
             }

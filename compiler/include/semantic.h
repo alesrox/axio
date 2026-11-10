@@ -9,7 +9,7 @@ typedef enum {
     TYPE_BOOL,
     TYPE_STRING,
     TYPE_VOID,
-    TYPE_NIL,
+    TYPE_NULL,
     TYPE_ERROR
 } Type;
 

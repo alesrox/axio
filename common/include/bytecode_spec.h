@@ -35,7 +35,7 @@ typedef enum {
     OP_MOVE        = 0x01,  /* R(A) = R(B) */
     OP_LOADK       = 0x02,  /* R(A) = Constants[Bx] */
     OP_LOADBOOL    = 0x03,  /* R(A) = (bool)B */
-    OP_LOADNIL     = 0x04,  /* R(A)..R(A+Bx) = NIL */
+    OP_LOADNULL     = 0x04,  /* R(A)..R(A+Bx) = NULL */
 
     /* --- 2. Integer Arithmetic (int32_t) --- */
     OP_ADD_INT     = 0x10,  /* R(A) = R(B) + R(C) */

@@ -13,7 +13,7 @@ typedef enum {
     TOKEN_STRING_LITERAL,
     TOKEN_TRUE,
     TOKEN_FALSE,
-    TOKEN_NIL,
+    TOKEN_NULL,
 
     // Keywords
     TOKEN_INT, TOKEN_FLOAT, TOKEN_BOOL, TOKEN_STRING,

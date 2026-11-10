@@ -76,8 +76,8 @@ static ASTNode* parse_statement(Parser* parser);
 static ASTNode* parse_expression(Parser* parser, Precedence precedence);
 static const ParseRule* get_rule(TokenType type);
 
-static ASTNode* parse_nil(Parser* parser) {
-    return ast_create_literal_nil(parser->previous.line);
+static ASTNode* parse_null(Parser* parser) {
+    return ast_create_literal_null(parser->previous.line);
 }
 
 static ASTNode* parse_boolean(Parser* parser) {
@@ -154,7 +154,7 @@ static ASTNode* parse_assign(Parser* parser, ASTNode* left) {
             case AST_LITERAL_FLOAT:
             case AST_LITERAL_STRING:
             case AST_LITERAL_BOOL:
-            case AST_LITERAL_NIL:
+            case AST_LITERAL_NULL:
                 error_at(parser, &parser->previous, 
                     "Cannot assign a value to literal.");
                 break;
@@ -236,7 +236,7 @@ static const ParseRule rules[] = {
     [TOKEN_STRING_LITERAL] = {parse_string,   NULL,         PREC_NONE},
     [TOKEN_TRUE]           = {parse_boolean,  NULL,         PREC_NONE},
     [TOKEN_FALSE]          = {parse_boolean,  NULL,         PREC_NONE},
-    [TOKEN_NIL]            = {parse_nil,      NULL,         PREC_NONE},
+    [TOKEN_NULL]            = {parse_null,      NULL,         PREC_NONE},
     [TOKEN_IDENTIFIER]     = {parse_variable, NULL,         PREC_NONE},
     [TOKEN_EOF]            = {NULL,           NULL,         PREC_NONE},
 };

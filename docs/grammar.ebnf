@@ -57,7 +57,7 @@ ArgumentList        ::= Expression { "," Expression } ;
 
 AccessExpr          ::= PrimaryExpr "[" Expression "]" ;
 
-Literal             ::= INT_LITERAL | FLOAT_LITERAL | STRING_LITERAL | BOOLEAN_LITERAL | "nil" ;
+Literal             ::= INT_LITERAL | FLOAT_LITERAL | STRING_LITERAL | BOOLEAN_LITERAL | "null" ;
 
 BOOLEAN_LITERAL     ::= "True" | "False" ;
 INT_LITERAL         ::= DIGIT { DIGIT } ;

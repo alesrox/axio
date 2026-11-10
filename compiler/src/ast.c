@@ -40,8 +40,8 @@ ASTNode* ast_create_literal_string(const char* value, int length, int line) {
     return node;
 }
 
-ASTNode* ast_create_literal_nil(int line) {
-    return allocate_node(AST_LITERAL_NIL, line);
+ASTNode* ast_create_literal_null(int line) {
+    return allocate_node(AST_LITERAL_NULL, line);
 }
 
 // Expressions
@@ -201,7 +201,7 @@ void ast_free(ASTNode* node) {
         case AST_LITERAL_INT:
         case AST_LITERAL_FLOAT:
         case AST_LITERAL_BOOL:
-        case AST_LITERAL_NIL:
+        case AST_LITERAL_NULL:
             break;
 
         case AST_LITERAL_STRING:
