@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "parser.h"
+#include "semantic.h"
 #include "lexer.h"
 
 char* read_file(const char* path) {
@@ -19,12 +21,34 @@ char* read_file(const char* path) {
 }
 
 int main(int argc, char* argv[]) {
-    (void)argc;
-    (void)argv;
-    char* source = read_file("test.src");
-    
-    // Compilation...
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <source.axio>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char* source = read_file(argv[1]);
+    if (!source) {
+        fprintf(stderr, "Could not read source file '%s'\n", argv[1]);
+        return EXIT_FAILURE;
+    }
 
+    Lexer lexer;
+    lexer_init(&lexer, source);
+    Parser parser;
+    parser_init(&parser, &lexer);
+    ASTNode* program = parse_program(&parser);
+
+    int result = EXIT_SUCCESS;
+    if (parser.had_error) {
+        result = EXIT_FAILURE;
+    } else {
+        SemanticAnalyzer analyzer;
+        semantic_init(&analyzer);
+        int errors = semantic_analyze(&analyzer, program);
+        if (errors != 0) result = EXIT_FAILURE;
+        semantic_destroy(&analyzer);
+    }
+
+    ast_free(program);
     free(source);
-    return 0;
+    return result;
 }

@@ -171,6 +171,7 @@ ASTNode* ast_create_func_decl(const char* name, int length, int line) {
     node->as.func_decl.name = strndup(name, length);
     node->as.func_decl.params = NULL;
     node->as.func_decl.param_count = 0;
+    node->as.func_decl.return_type = TOKEN_EOF;
     node->as.func_decl.body = NULL;
     return node;
 }

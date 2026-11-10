@@ -125,6 +125,7 @@ struct ASTNode {
             char* name;
             Param* params;
             int param_count;
+            TokenType return_type; /* TOKEN_EOF means no explicit return type (void). */
             ASTNode* body;
         } func_decl;
     } as;

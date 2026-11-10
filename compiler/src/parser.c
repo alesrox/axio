@@ -317,6 +317,16 @@ static ASTNode* parse_func_decl(Parser* parser) {
 
     consume(parser, TOKEN_RPAREN, "')' was expected after parameters.");
 
+    if (match(parser, TOKEN_ARROW)) {
+        if (parser->current.type != TOKEN_INT && parser->current.type != TOKEN_FLOAT &&
+            parser->current.type != TOKEN_BOOL && parser->current.type != TOKEN_STRING) {
+            error_at(parser, &parser->current, "A return type was expected after '->'.");
+        } else {
+            func_node->as.func_decl.return_type = parser->current.type;
+            advance(parser);
+        }
+    }
+
     ASTNode* body = parse_block(parser);
     ast_func_set_body(func_node, body);
 
@@ -417,7 +427,7 @@ static ASTNode* parse_statement(Parser* parser) {
     if (match(parser, TOKEN_WHILE)) {
         return parse_while_stmt(parser);
     }
-    if (match(parser, TOKEN_LBRACE)) {
+    if (parser->current.type == TOKEN_LBRACE) {
         return parse_block(parser);
     }
 
